@@ -3,6 +3,7 @@ namespace Controllers\Mnt;
 use Controllers\PublicController;
 use Exception;
 class Categoria extends PublicController{
+    
     private $viewData = array(
         "mode" => "DSP",
         "modedsc" => "",
@@ -10,7 +11,11 @@ class Categoria extends PublicController{
         "catnom" => "",
         "catest" => "ACT",
         "catest_ACT" => "selected",
-        "catest_INA" => ""
+        "catest_INA" => "",
+        "catnom_error" =>"",
+        "general_errors" =>array(),
+        "has_errors" => false,
+
     );
 
     public $mode = array
@@ -24,6 +29,13 @@ class Categoria extends PublicController{
     {
         try{
             $this->page_loades();
+            if($this->isPostBack()){
+                $this->validatePostData();
+                if(!$this->viewData["has_errors"]){
+                    $this->executeAction();
+                }
+            }
+
         } catch(\Exception $error){
             error_log(sprintf("Controller/Mnt/Categoria ERROR: %s", $error));
             \Utilities\Site::redirectToWithMsg(
@@ -49,8 +61,7 @@ class Categoria extends PublicController{
 
         */
     }
-    private function page_loaded()
-    {
+    private function page_loaded(){
         if(isset($_GET['mode'])){
             if(isset($this->modes[$_GET['mode']])){
                 $this->viewData["mode"] = $_GET['mode'];
@@ -62,10 +73,78 @@ class Categoria extends PublicController{
         }
         if($this->viewData["mode"] !== "INS") {
             if(isset($_GET['catid'])){
-                $this->viewData["catid"] = $_GET["catid"];
+                $this->viewData["catid"] = intval($_GET["catid"]);
             } else {
                 throw new Exception("Id not found on Query Params");
             }
         }
     }
+
+    private function validatePostData(){
+        if(isset($_POST["catnom"])){
+            if(\Utilities\Validators::IsEmpty($_POST["catnom"])){
+                $this->viewData["has_errors"] = true;
+                $this->viewData["catnom_error"] = "El nombre no puede ir vacio";
+            }
+        } else{
+            throw new Exception("CatNom not present in form");
+        }
+//--
+        if(isset($_POST["catest"])){
+            if(in_array($_POST["catest"], array("ACT", "INA"))){
+                throw new Exception("CatEst incorrect value");
+
+            }
+        } else{
+            throw new Exception("CatEst not present in form");
+            
+        }
+//--
+        if(isset($_POST["mode"])){
+            if(!array_key_exists($_POST["mode"], $this->modes)){
+                throw new Exception("Mode not present in form");
+            }
+            if($this->viewData["mode"] !==$_POST["mode"]){
+                throw new Exception("Mode not present in form");
+            }
+        } else{
+            throw new Exception("Mode not present in form");
+        }
+//--
+        if(isset($_POST["catid"])){
+            if(!($this->viewData["mode"] !== "INS" && intval($_POST["catid"])>0)){
+                throw new Exception("CatId not present in form");
+
+            }
+            if($this->viewData["catid"] !==$_POST["catid"]){
+                throw new Exception("Mode not present in form");
+            }
+        } else{
+            throw new Exception("CatId not present in form");
+        }
+        $this->viewData["catnom"] = $_POST["catnom"];
+        $this->viewData["catest"] = $_POST["catest"];
+        
+    }
+
+    private function executeAction(){
+        switch($this->viewData["mode"]){
+            case "INS":
+                $inserted = \Dao\Mnt\Categorias::insert(
+                    $this->viewData["catnom"],
+                    $this->viewData["catest"],
+                );
+                if($inserted > 0){
+                    \Utilities\Site::redirectToWithMsg(
+
+                    );
+                }
+                break;
+            case "UPD":
+                break;
+            case "DEL":
+                break;
+        }
+    }
+
 }
