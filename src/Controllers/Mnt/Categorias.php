@@ -2,6 +2,7 @@
 namespace Controllers\Mnt;
 
 use Controllers\PublicController;
+use Views\Renderer;
 
 class Categorias extends PublicController{
     public function run() :void{
