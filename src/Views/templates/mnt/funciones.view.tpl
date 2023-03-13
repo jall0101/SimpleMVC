@@ -1,4 +1,4 @@
-<h1>Lista de Roles</h1>
+<h1>Lista de Funciones</h1>
 <section class="WWFilter">
 </section>
 
@@ -7,9 +7,9 @@
     <thead>
       <tr>
         <th>Código</th>
-        <th>Rol</th>
+        <th>Función</th>
         <th>Estado</th>
-
+        <th>Tipo</th>
 
         <th>
           {{if new_enabled}}
@@ -20,38 +20,40 @@
     </thead>
 
     <tbody>
-      {{foreach roles}}
+      {{foreach funciones}}
       <tr>
 
-        <td>{{rolescod}}</td>
+        <td>{{fncod}}</td>
 
-        <td><a href="index.php?page=Mnt_Rol&mode=DSP&rolescod={{rolescod}}">{{rolesdsc}}</a></td>
+        <td><a href="index.php?page=Mnt_Funcion&mode=DSP&fncod={{fncod}}">{{fndsc}}</a></td>
 
-        <td><a>{{rolesest}}</a></td>
+        <td><a>{{fnest}}</a></td>
+
+        <td><a>{{fntyp}}</a></td>
 
 
         <td>
           {{if ~edit_enabled}}
           <form action="index.php" method="get">
-                <input type="hidden" name="page" value="Mnt_Rol"/>
+                <input type="hidden" name="page" value="Mnt_Funcion"/>
                 <input type="hidden" name="mode" value="UPD" />
-                <input type="hidden" name="rolescod" value={{rolescod}} />
+                <input type="hidden" name="fncod" value={{fncod}} />
                 <button type="submit">Editar</button>
           </form>
 
           {{endif ~edit_enabled}}
           {{if ~delete_enabled}}
           <form action="index.php" method="get">
-             <input type="hidden" name="page" value="Mnt_Rol"/>
+             <input type="hidden" name="page" value="Mnt_Funcion"/>
               <input type="hidden" name="mode" value="DEL" />
-              <input type="hidden" name="rolescod" value={{rolescod}} />
+              <input type="hidden" name="fncod" value={{fncod}} />
               <button type="submit">Eliminar</button>
           </form>
           {{endif ~delete_enabled}}
         </td>
 
       </tr>
-      {{endfor roles}}
+      {{endfor funciones}}
     </tbody>
 
   </table>
@@ -62,7 +64,7 @@
       document.getElementById("btnAdd").addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        window.location.assign("index.php?page=mnt_rol&mode=INS&rolescod=0");
+        window.location.assign("index.php?page=mnt_funcion&mode=INS&fncod=0");
       });
     });
 </script>
